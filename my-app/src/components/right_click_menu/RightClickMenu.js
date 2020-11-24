@@ -5,9 +5,6 @@ class RightClickMenu extends React.Component{
     constructor(props){
         super(props);
     }
-    doubleClickHandler(e){
-        e.preventDefault();
-    }
     showPageRightClickMenu(){
         var details=this.props.renderDetails;
         //console.log(details);
@@ -34,7 +31,6 @@ class RightClickMenu extends React.Component{
         return elm;
     }
     showNodeRightClickMenu(){
-        console.log('node right click');
         var details=this.props.renderDetails;
         //console.log(details);
         if(!details.show){
@@ -42,7 +38,6 @@ class RightClickMenu extends React.Component{
         }
         var elm=<div 
             className="RightClickMenu" 
-            id="rightClickMenu"
             style={{
                 zIndex: "100",
                 position: 'absolute',
@@ -64,16 +59,14 @@ class RightClickMenu extends React.Component{
         return elm;
     }
     render(){
-        console.log('caller is',this.props.renderDetails.caller);
+        console.log('RIGHT_CLICK_MENU: caller is',this.props.renderDetails.caller);
         if(this.props.renderDetails.caller==='Page'){
             return this.showPageRightClickMenu.call(this);
         }
-        else if(this.props.renderDetails.caller==='Node'){
+        else if(this.props.renderDetails.caller==='Graph'){
             return this.showNodeRightClickMenu.call(this);
         }
-        else{
-            return <div></div>;
-        }
+        return <div></div>
     }
 }
 

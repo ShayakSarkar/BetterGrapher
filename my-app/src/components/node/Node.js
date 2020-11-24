@@ -1,7 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './Node.css'
-import RightClickMenu from '../right_click_menu/RightClickMenu'
+//import RightClickMenu from '../right_click_menu/RightClickMenu'
 
 class Node extends React.Component{
     constructor(props){
@@ -14,20 +13,23 @@ class Node extends React.Component{
             }
         }; 
     }
-
-    clickHandler(e){
-        console.log('clicked');
+    handleRightClick(e){
+        console.log('NODE: receieved right click');
     }
-    
+    handleClick(e){
+        console.log('NODE: click event receieved', e);
+    }
     render(){
         return <div 
             className="Node"
             draggable="true"
-            onClick={this.clickHandler.bind(this)}
             ref={this.nodeRef}
+            onContextMenu={this.handleRightClick.bind(this)}
+            onClick={this.handleClick.bind(this)}
             style={{
                 left: this.props.posx+"px",
                 top: this.props.posy+"px"
+            
             }}>
             <div 
                 className="NodePayload">

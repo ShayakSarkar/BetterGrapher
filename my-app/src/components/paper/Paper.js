@@ -4,6 +4,7 @@ import NumberingButton from '../numbering_button/NumberingButton';
 import Graph from '../graph/Graph';
 import RightClickMenu from '../right_click_menu/RightClickMenu';
 import ExportButton from '../export_button/ExportButton';
+import ClearButton from '../clear_button/ClearButton';
 
 //We need to add a grid pattern to the paper element later on
 class Paper extends React.Component{
@@ -19,33 +20,55 @@ class Paper extends React.Component{
                 show: false,
                 posx: null,
                 posy: null,
-                caller: null
+                caller: 'Page'
             },
             export: false,
             currentNumberingScheme: 'a',
             numberingSchemeButtonDisabled: false,
             numberOfNodes: 0,
-            reRenderGraph: false
+            reRenderGraph: false,
+            clearGraph: false
         }
     }
-    
+    resetClearGraphToTrue(){
+        this.setState({
+            clearGraph: true,
+            numberOfNodes: 0,
+            newNode: {
+                data: null,
+                posx: null,
+                posy: null
+            }
+        });
+    }
+    resetClearGraphToFalse(){
+        this.setState({
+            clearGraph: false
+        });
+    }
     onRightClickHandler(e){
         e.preventDefault();
-        console.log('PAPER: got right click from ',e.target.className);
-        console.log('PAPER: event is ', e);
-        var className=null;
+        //console.log('PAPER: got right click from ',e.target.className);
         if(e.target.className==='Node' || e.target.className==='NodePayload'){
-            className='Node';
+            if(this.state.rightClickMenu.show){
+                this.setState({
+                    rightClickMenu: {
+                        show: false,
+                        posx: null,
+                        posy: null,
+                        caller: 'Page'
+                    }
+                });
+            }
+            return;
         }
-        else{
-            className='Page';
-        }
+        console.log('PAPER: event is ', e);
         this.setState({
             rightClickMenu:{
                 show:true,
                 posx: e.clientX,
                 posy: e.clientY,
-                caller: className
+                caller: 'Page'
             }
         });
     }
@@ -66,7 +89,7 @@ class Paper extends React.Component{
                 show: false,
                 posX: null,
                 posY: null,
-                caller: null
+                caller: 'Page'
             }
         });
     }
@@ -105,7 +128,7 @@ class Paper extends React.Component{
                 show: false,
                 posx: null,
                 posy: null,
-                caller: null
+                caller: 'Page'
             }
         });
     }
@@ -129,7 +152,7 @@ class Paper extends React.Component{
         });
     }
     onClickHandler(e){
-        //console.log(e.target.className);
+        console.log('PAPER: click event receieved',e.target.className);
         if(e.target.className==='Option'){
             return;
         }
@@ -142,7 +165,7 @@ class Paper extends React.Component{
                     show: false,
                     posX: null,
                     posY: null,
-                    caller: null
+                    caller: 'Page'
                 }
             });
 
@@ -223,7 +246,9 @@ class Paper extends React.Component{
                 pageResetExportToFalse={this.resetExportToFalse.bind(this)}
                 reRenderGraph={this.state.reRenderGraph}
                 pageResetReRenderGraphToFalse={this.resetReRenderGraphToFalse.bind(this)}
-                pageResetReRenderGraphToTrue={this.resetReRenderGraphToTrue.bind(this)}>
+                pageResetReRenderGraphToTrue={this.resetReRenderGraphToTrue.bind(this)}
+                clearGraph={this.state.clearGraph}
+                resetClearGraphToFalse={this.resetClearGraphToFalse.bind(this)}>
             </Graph>
             <RightClickMenu 
                 renderDetails={this.state.rightClickMenu}
@@ -239,6 +264,9 @@ class Paper extends React.Component{
                 pageChangeNumberingScheme={this.changeNumberingScheme.bind(this)}
                 disabled={this.state.numberingSchemeButtonDisabled}>
             </NumberingButton>
+            <ClearButton
+                pageResetClearGraphToTrue={this.resetClearGraphToTrue.bind(this)}>
+            </ClearButton>
         </div>
     }
 }

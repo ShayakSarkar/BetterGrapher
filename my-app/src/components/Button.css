@@ -4,6 +4,8 @@
     font-family: arial;
     font-weight: bolder;
     border-radius: 4px;
+    font-size: 16px;
+    color: black;
 }
 .Button:hover{
     cursor: pointer;

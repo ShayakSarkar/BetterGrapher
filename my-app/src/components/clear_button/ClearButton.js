@@ -7,8 +7,14 @@ class ClearButton extends React.Component{
     }
     render(){
         return <button 
-            onClick={this.props.pageClearGraph}
-            className="Button">
+            onClick={this.props.pageResetClearGraphToTrue}
+            className="Button"
+            style={{
+                position: 'absolute',
+                left: '600px',
+                top: '70px'
+            }}>
+            Clear Graph
         </button>
     }
 }
