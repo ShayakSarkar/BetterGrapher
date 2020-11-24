@@ -1,0 +1,21 @@
+.Node{
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    background-color: lightpink;
+    border-style: solid;
+    border-color: red;
+    border-width: 2px;
+    border-radius: 25px;
+    box-shadow: 5px 5px;
+    font-family: arial;
+    font-weight: bolder;
+}
+.Node:hover{
+    cursor: pointer;
+}
+.NodePayload{
+    position: absolute;
+    left: 40%;
+    top: 30%;
+}

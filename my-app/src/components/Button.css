@@ -1,0 +1,10 @@
+.Button{
+    padding: 9px;
+    background: pink;
+    font-family: arial;
+    font-weight: bolder;
+    border-radius: 4px;
+}
+.Button:hover{
+    cursor: pointer;
+}
