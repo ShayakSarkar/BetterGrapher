@@ -10,6 +10,7 @@
     box-shadow: 5px 5px;
     font-family: arial;
     font-weight: bolder;
+    z-index: 10;
 }
 .Node:hover{
     cursor: pointer;

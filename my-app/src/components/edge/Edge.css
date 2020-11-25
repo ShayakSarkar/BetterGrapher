@@ -1,3 +1,11 @@
 .Edge{
-    z-index: -10;
+    background-color: white;
+    height: 4px;
+    z-index: 9;
+}
+.Edge:hover{
+    cursor: pointer;
+    border-style: solid;
+    border-width: 2px;
+    border-color: orange;
 }

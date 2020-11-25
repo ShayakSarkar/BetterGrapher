@@ -1,6 +1,7 @@
 import React from 'react';
 import Node from '../node/Node';
 import RightClickMenu from '../right_click_menu/RightClickMenu';
+import Edge from '../edge/Edge';
 
 class Graph extends React.Component{
     constructor(props){
@@ -16,13 +17,20 @@ class Graph extends React.Component{
         };
         this.nodeList=[];
         this.currentFrom={
+            data: null,
             posx: null,
             posy: null
         };
         this.currentTo={
+            data: null,
             posx: null,
             posy: null
         };
+        this.selectedNode={
+            data: null,
+            posx: null,
+            posy: null
+        }
     }
     componentDidUpdate(){
         console.log('GRAPH: updated');
@@ -89,11 +97,87 @@ class Graph extends React.Component{
         });
         console.log('GRAPH: Right click state changed');
         console.log('GRAPH: current state');
+        console.log('GRAPH: selected node: ',e.target);
+        if(e.target.className==='NodePayload'){
+            console.log('GRAPH: value of node: ',e.target.outerText);
+            this.selectedNode={
+                data: e.target.outerText,
+                posx: e.clientX,
+                posy: e.clientY
+            }
+        }
+        else{
+            console.log('GRAPH: value of node: ',e.target.children[0].outerText);
+            this.selectedNode={
+                data: e.target.children[0].outerText,
+                posx: e.clientX,
+                posy: e.clientY
+            }
+        }
         console.log(this.state);
-        this.forceUpdate();
     }
     clickHandler(e){
-        console.log('GRAPH: click receieved');
+        this.setState({
+            rightClickMenu: {
+                show:false,
+                posx: null,
+                posy: null,
+                caller: 'Graph'
+            }
+        });
+        console.log('GRAPH: click receieved from ',e.target.className,'value: ',e.target.value);
+        if(e.target.value==="set as 'from' node"){
+            this.currentFrom={
+                ...this.selectedNode
+            };
+        }
+        else if(e.target.value==="set as 'to' node"){
+            if(this.currentFrom.data===null){
+                this.selectedNode={
+                    data: null,
+                    posx: null,
+                    posy: null
+                }
+                return;
+            }
+            this.currentTo={
+                ...this.selectedNode
+            };
+            this.state.edgeList.push({
+                from: {
+                    data: this.currentFrom.data,
+                    x: this.currentFrom.posx,
+                    y: this.currentFrom.posy
+                },
+                to: {
+                    data: this.currentTo.data,
+                    x: this.currentTo.posx,
+                    y: this.currentTo.posy
+                },
+                weight: 1
+            });
+            var newEdgeList=this.state.edgeList;
+            this.setState({
+                edgeList: newEdgeList
+            });
+            console.log('GRAPH: new edge list: ',this.state.edgeList);
+            this.currentFrom={
+                data: null,
+                posx: null,
+                posy: null
+            }
+            this.currentTo={
+                data: null,
+                posx: null,
+                posy: null
+            }
+        }
+        
+        this.selectedNode={
+            data: null,
+            posx: null,
+            posy: null
+        }
     }
     render(){
         //console.log('graph props');
@@ -103,11 +187,28 @@ class Graph extends React.Component{
         console.log('GRAPH: current nodeList: ',this.nodeList);
         if(this.props.clearGraph){
             this.nodeList=[];
+            this.state.rightClickMenu={
+                rightClickMenu: {
+                    show: false,
+                    posx: null,
+                    posy: null,
+                    caller: 'Graph'
+                }
+            };
+            this.state.edgeList=[];
+        }
+        var modifiedRenderDetails= {   
+            show: this.props.pageAllowGraphRightClickMenu && this.state.rightClickMenu.show,
+            posx: this.state.rightClickMenu.posx,
+            posy: this.state.rightClickMenu.posy,
+            caller: 'Graph'                            
         }
         if(this.props.newNode.data===null){
+            //the modifiedRenderDetails object takes into account if the Paper component
+            //allows the right click menu from the graph to be shown
             return <div>
                 <RightClickMenu
-                    renderDetails={this.state.rightClickMenu}>
+                    renderDetails={modifiedRenderDetails}>
                 </RightClickMenu>
             </div>
         }
@@ -130,14 +231,23 @@ class Graph extends React.Component{
                 nodePayload={obj.data}>
             </Node>
         }
+        function getReactObjectsFromEdges(obj){
+            return <Edge
+                key={(obj.from.x*obj.from.y/obj.to.x*obj.to.y)+Math.random()*10000}
+                from={obj.from}
+                to={obj.to}>
+            </Edge>
+        }
         var nodeElms=this.nodeList.map(getReactObjectsFromNodes.bind(this));
+        var edgeElms=this.state.edgeList.map(getReactObjectsFromEdges.bind(this));
         //console.log('nodeElms: ',nodeElms);
         this.cachedRender=<div
             onContextMenu={this.rightClickHandler.bind(this)}
             onClick={this.clickHandler.bind(this)}>
             {nodeElms}
+            {edgeElms}
             <RightClickMenu 
-                renderDetails={this.state.rightClickMenu}>
+                renderDetails={modifiedRenderDetails}>
             </RightClickMenu>
         </div>;
         return this.cachedRender;

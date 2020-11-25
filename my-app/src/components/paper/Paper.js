@@ -27,7 +27,8 @@ class Paper extends React.Component{
             numberingSchemeButtonDisabled: false,
             numberOfNodes: 0,
             reRenderGraph: false,
-            clearGraph: false
+            clearGraph: false,
+            allowGraphRightClickMenu: true
         }
     }
     resetClearGraphToTrue(){
@@ -57,8 +58,14 @@ class Paper extends React.Component{
                         posx: null,
                         posy: null,
                         caller: 'Page'
-                    }
+                    },
+                    allowGraphRightClickMenu: true
                 });
+            }
+            else{
+                this.setState({
+                    allowGraphRightClickMenu: true
+                })
             }
             return;
         }
@@ -69,7 +76,9 @@ class Paper extends React.Component{
                 posx: e.clientX,
                 posy: e.clientY,
                 caller: 'Page'
-            }
+            },
+            allowGraphRightClickMenu: false,
+            clearSelectedNodeInGraph: true
         });
     }
     getNextNodeData(){
@@ -129,7 +138,8 @@ class Paper extends React.Component{
                 posx: null,
                 posy: null,
                 caller: 'Page'
-            }
+            },
+            allowGraphRightClickMenu: false
         });
     }
     pageExportHandler(e){
@@ -154,9 +164,12 @@ class Paper extends React.Component{
     onClickHandler(e){
         console.log('PAPER: click event receieved',e.target.className);
         if(e.target.className==='Option'){
+            this.setState({
+                allowGraphRightClickMenu: false
+            });
             return;
         }
-        if(!this.state.rightClickMenu.show){
+        if(!this.state.rightClickMenu.show && !this.state.allowGraphRightClickMenu){
             return;
         }
         else{
@@ -166,7 +179,8 @@ class Paper extends React.Component{
                     posX: null,
                     posY: null,
                     caller: 'Page'
-                }
+                },
+                allowGraphRightClickMenu: false
             });
 
         }
@@ -248,7 +262,8 @@ class Paper extends React.Component{
                 pageResetReRenderGraphToFalse={this.resetReRenderGraphToFalse.bind(this)}
                 pageResetReRenderGraphToTrue={this.resetReRenderGraphToTrue.bind(this)}
                 clearGraph={this.state.clearGraph}
-                resetClearGraphToFalse={this.resetClearGraphToFalse.bind(this)}>
+                resetClearGraphToFalse={this.resetClearGraphToFalse.bind(this)}
+                pageAllowGraphRightClickMenu={this.state.allowGraphRightClickMenu}>
             </Graph>
             <RightClickMenu 
                 renderDetails={this.state.rightClickMenu}
