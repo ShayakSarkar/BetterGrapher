@@ -19,19 +19,19 @@ class Edge extends React.Component{
             if(p2.y===p3.y){
                 p2.y+=10;
             }
-            console.log('GRAPH: ',p1,p2,p3);
+            //console.log('EDGE: ',p1,p2,p3);
             console.log(window.innerHeight);
             p1.y=window.innerHeight-p1.y;
             p2.y=window.innerHeight-p2.y;
             p3.y=window.innerHeight-p3.y;
-            console.log('GRAPH: ',p1,p2,p3);
+            //console.log('EDGE: ',p1,p2,p3);
             return ((p2.y-p1.y)*(p3.x-p2.x)-(p3.y-p2.y)*(p2.x-p1.x))>0;
         }
         function dist(p1,p2){
             return Math.sqrt((p2.y-p1.y)*(p2.y-p1.y)+(p2.x-p1.x)*(p2.x-p1.x));
         }
         function hasFirstQuad(p1,p2,p3){
-            console.log('GRAPH: ',p1,p2,p3);
+            //console.log('EDGE: ',p1,p2,p3);
             console.log(window.innerHeight);
             p1.y=window.innerHeight-p1.y;
             p2.y=window.innerHeight-p2.y;
@@ -81,6 +81,7 @@ class Edge extends React.Component{
         }
         return <div
             className="Edge"
+            onClick={this.clickHandler.bind(this)}
             style={{
                 position: 'absolute',
                 left: posx+"px",
@@ -92,11 +93,11 @@ class Edge extends React.Component{
                     style={{
                         position: 'absolute',
                         left: length/2+"px",
-                        top: "5px",
+                        top: "4.3px",
                         transform: firstRot,
                         background: "white",
                         width: "10px",
-                        height: "2px"
+                        height: "3px"
                     }}>
                 </div>
                 <div
@@ -107,7 +108,7 @@ class Edge extends React.Component{
                         transform: secondRot,
                         background: "white",
                         width: "10px",
-                        height: "2px"
+                        height: "3px"
                     }}>
                 </div>
         </div>

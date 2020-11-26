@@ -17,7 +17,8 @@ class RightClickMenu extends React.Component{
             style={{
                 position: 'absolute',
                 left: this.props.renderDetails.posx+'px',
-                top: this.props.renderDetails.posy+'px'
+                top: this.props.renderDetails.posy+'px',
+                zIndex: '1000'
             }}>
             <option 
                 className="Option"
@@ -39,7 +40,7 @@ class RightClickMenu extends React.Component{
         var elm=<div 
             className="RightClickMenu" 
             style={{
-                zIndex: "100",
+                zIndex: "1000",
                 position: 'absolute',
                 left: this.props.renderDetails.posx+"px",
                 top: this.props.renderDetails.posy+"px"

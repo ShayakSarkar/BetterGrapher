@@ -41,6 +41,69 @@ class Graph extends React.Component{
             this.props.pageResetReRenderGraphToFalse();
         }
     }
+    transformEdgeList(){
+        console.log('called transform list');
+        console.log(this.state.edgeList);
+        var newEdgeList=[];
+        if(this.props.currentNumberingScheme==='1' && this.state.edgeList.length>0 && this.state.edgeList[0].from.data.charCodeAt(0)>=65){
+            //The additional conditions need to be checked because the reRendering phase
+            //happens unnecessarily multiple times. It is a bug
+            for(var i in this.state.edgeList){
+               var fromData=this.state.edgeList[i].from.data;
+               var toData=this.state.edgeList[i].to.data;
+               //console.log('GRAPH: fromData: ',fromData.charCodeAt(0)-64);
+               //console.log('GRAPH: toData: ',toData.charCodeAt(0)-64);
+               newEdgeList.push({
+                    from: {
+                        data: String(fromData.charCodeAt(0)-64),
+                        x: this.state.edgeList[i].from.x,
+                        y: this.state.edgeList[i].from.y
+                    },
+                    to: {
+                        data: String(toData.charCodeAt(0)-64),
+                        x: this.state.edgeList[i].to.x,
+                        y: this.state.edgeList[i].to.y
+                    },
+                    weight: this.state.edgeList[i].weight
+               });
+               console.log('GRAPH: 1 edge pushed into newEdgeList',newEdgeList);
+           } 
+           this.state.edgeList=[];
+           for(i in newEdgeList){
+               this.state.edgeList.push(newEdgeList[i]);
+           }
+           console.log('GRAPH: new state of edge list',this.state.edgeList);
+        }
+        else if(this.props.currentNumberingScheme==='a' && this.state.edgeList.length>0 && this.state.edgeList[0].from.data.charCodeAt(0)>=48 && this.state.edgeList[0].from.data.charCodeAt(0)<=57){
+            //The additional conditions need to be checked because the reRendering phase
+            //happens unnecessarily multiple times. It is a bug
+            for(var i in this.state.edgeList){
+               var fromData=this.state.edgeList[i].from.data;
+               var toData=this.state.edgeList[i].to.data;
+               //console.log('GRAPH: fromData: ',fromData.charCodeAt(0)-64);
+               //console.log('GRAPH: toData: ',toData.charCodeAt(0)-64);
+               newEdgeList.push({
+                    from: {
+                        data: String.fromCharCode(64+parseInt(fromData)),
+                        x: this.state.edgeList[i].from.x,
+                        y: this.state.edgeList[i].from.y
+                    },
+                    to: {
+                        data: String.fromCharCode(64+parseInt(toData)),
+                        x: this.state.edgeList[i].to.x,
+                        y: this.state.edgeList[i].to.y
+                    },
+                    weight: this.state.edgeList[i].weight
+               });
+               console.log('GRAPH: 1 edge pushed into newEdgeList',newEdgeList);
+           } 
+           this.state.edgeList=[];
+           for(i in newEdgeList){
+               this.state.edgeList.push(newEdgeList[i]);
+           }
+           console.log('GRAPH: new state of edge list',this.state.edgeList)
+        }
+    }
     transformNodeList(){
         //console.log('started transfrom');
         for(var node in this.nodeList){
@@ -63,7 +126,6 @@ class Graph extends React.Component{
                 continue;
             }
             else{
-                //console.log(this.nodeList[i],'to be deleted');
                 break;
             }
         }
@@ -180,10 +242,6 @@ class Graph extends React.Component{
         }
     }
     render(){
-        //console.log('graph props');
-        //console.log(this.props);
-        //console.log('Called graph render');
-        //console.log(this.nodeList);
         console.log('GRAPH: current nodeList: ',this.nodeList);
         if(this.props.clearGraph){
             this.nodeList=[];
@@ -220,6 +278,7 @@ class Graph extends React.Component{
             this.nodeList.push(this.props.newNode);
         }
         if(this.props.reRenderGraph){
+            this.transformEdgeList.call(this);
             this.transformNodeList.call(this);
         }
         function getReactObjectsFromNodes(obj){
