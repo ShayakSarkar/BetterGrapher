@@ -2,12 +2,18 @@ import React from 'react';
 import Node from '../node/Node';
 import RightClickMenu from '../right_click_menu/RightClickMenu';
 import Edge from '../edge/Edge';
+import EdgeWeightForm from '../edge_weight_form/EdgeWeightForm';
 
 class Graph extends React.Component{
     constructor(props){
         super(props);
         this.state={
             edgeList: [],
+            edgeWeightForm: {
+                show: true,
+                posx: null,
+                posy: null
+            },
             rightClickMenu: {
                 show: false,
                 posx: null,
@@ -30,7 +36,12 @@ class Graph extends React.Component{
             data: null,
             posx: null,
             posy: null
-        }
+        };
+        this.selectedEdge={
+            fromData: null,
+            toData: null,
+            weight: null
+        } 
     }
     componentDidUpdate(){
         console.log('GRAPH: updated');
@@ -146,6 +157,11 @@ class Graph extends React.Component{
     }
     rightClickHandler(e){
         console.log('GRAPH: right click handler called');
+        this.selectedEdge={
+            fromData: null,
+            toData: null,
+            weight: null
+        };
         if(e.target.className!=='Node' && e.target.className!=='NodePayload'){
             return;
         }
@@ -187,6 +203,13 @@ class Graph extends React.Component{
                 caller: 'Graph'
             }
         });
+        if(e.target.className!=='Edge' && e.target.className!=='EdgeArrow'){
+            this.selectedEdge={
+                fromData: null,
+                toData: null,
+                weight: null
+            };
+        }
         console.log('GRAPH: click receieved from ',e.target.className,'value: ',e.target.value);
         if(e.target.value==="set as 'from' node"){
             this.currentFrom={
@@ -241,6 +264,45 @@ class Graph extends React.Component{
             posy: null
         }
     }
+    selectEdge(edgeDetails,e){
+        console.log('GRAPH: got click event from edge, edge details are: ',edgeDetails);
+        console.log('GRAPH:',e);
+        this.selectedEdge={
+            fromData: edgeDetails.fromData,
+            toData: edgeDetails.toData,
+            weight: edgeDetails.weight
+        };
+        this.setState({
+            edgeWeightForm: {
+                show: true,
+                posx: e.clientX,
+                posy: e.clientY
+            }
+        });
+    }
+    changeEdgeWeight(newWeight){
+        console.log('GRAPH: new weight receieved from edge weight form', newWeight);
+        function match(obj1,obj2){
+            console.log('GRAPH (match): trying to match',obj1,obj2);
+            if(obj1.from.data===obj2.fromData && obj1.to.data===obj2.toData && obj1.weight===obj2.weight){
+                console.log('GRAPH: match found ',obj1);
+                return true;
+            }
+            return false;
+        }
+        for(var i in this.state.edgeList){
+            if(match(this.state.edgeList[i],this.selectedEdge)){
+                this.state.edgeList[i].weight=newWeight;
+                console.log('GRAPH: changed edge to ',this.state.edgeList[i]);
+                break;
+            }
+        }
+        this.selectedEdge={
+            fromData: null,
+            toData: null,
+            weight: null
+        };
+    }
     render(){
         console.log('GRAPH: current nodeList: ',this.nodeList);
         if(this.props.clearGraph){
@@ -255,18 +317,30 @@ class Graph extends React.Component{
             };
             this.state.edgeList=[];
         }
-        var modifiedRenderDetails= {   
+        if(!this.props.pageAllowEdgeWeightForm){
+            this.selectedEdge={
+                fromData: null,
+                toData: null,
+                weight: null
+            };
+        }
+        var modifiedRightClickMenuRenderDetails= {   
             show: this.props.pageAllowGraphRightClickMenu && this.state.rightClickMenu.show,
             posx: this.state.rightClickMenu.posx,
             posy: this.state.rightClickMenu.posy,
             caller: 'Graph'                            
+        }
+        var modifiedEdgeWeightFormRenderDetails={
+            show: this.props.pageAllowEdgeWeightForm && this.state.edgeWeightForm.show,
+            posx: this.state.edgeWeightForm.posx,
+            posy: this.state.edgeWeightForm.posy,
         }
         if(this.props.newNode.data===null){
             //the modifiedRenderDetails object takes into account if the Paper component
             //allows the right click menu from the graph to be shown
             return <div>
                 <RightClickMenu
-                    renderDetails={modifiedRenderDetails}>
+                    renderDetails={modifiedRightClickMenuRenderDetails}>
                 </RightClickMenu>
             </div>
         }
@@ -294,7 +368,9 @@ class Graph extends React.Component{
             return <Edge
                 key={(obj.from.x*obj.from.y/obj.to.x*obj.to.y)+Math.random()*10000}
                 from={obj.from}
-                to={obj.to}>
+                to={obj.to}
+                weight={obj.weight}
+                graphSelectEdge={this.selectEdge.bind(this)}>
             </Edge>
         }
         var nodeElms=this.nodeList.map(getReactObjectsFromNodes.bind(this));
@@ -306,8 +382,12 @@ class Graph extends React.Component{
             {nodeElms}
             {edgeElms}
             <RightClickMenu 
-                renderDetails={modifiedRenderDetails}>
+                renderDetails={modifiedRightClickMenuRenderDetails}>
             </RightClickMenu>
+            <EdgeWeightForm
+                renderDetails={modifiedEdgeWeightFormRenderDetails}
+                graphChangeEdgeWeight={this.changeEdgeWeight.bind(this)}>
+            </EdgeWeightForm>
         </div>;
         return this.cachedRender;
     }

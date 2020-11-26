@@ -28,7 +28,8 @@ class Paper extends React.Component{
             numberOfNodes: 0,
             reRenderGraph: false,
             clearGraph: false,
-            allowGraphRightClickMenu: true
+            allowGraphRightClickMenu: true,
+            allowEdgeWeightForm: true
         }
     }
     resetClearGraphToTrue(){
@@ -59,12 +60,14 @@ class Paper extends React.Component{
                         posy: null,
                         caller: 'Page'
                     },
-                    allowGraphRightClickMenu: true
+                    allowGraphRightClickMenu: true,
+                    allowEdgeWeightForm: false
                 });
             }
             else{
                 this.setState({
-                    allowGraphRightClickMenu: true
+                    allowGraphRightClickMenu: true,
+                    allowEdgeWeightForm: false
                 })
             }
             return;
@@ -78,7 +81,8 @@ class Paper extends React.Component{
                 caller: 'Page'
             },
             allowGraphRightClickMenu: false,
-            clearSelectedNodeInGraph: true
+            clearSelectedNodeInGraph: true,
+            allowEdgeWeightForm: false
         });
     }
     getNextNodeData(){
@@ -163,13 +167,21 @@ class Paper extends React.Component{
     }
     onClickHandler(e){
         console.log('PAPER: click event receieved',e.target.className);
-        if(e.target.className==='Option'){
+        if(e.target.className==="Edge" || e.target.className==="EdgeArrow"){
             this.setState({
-                allowGraphRightClickMenu: false
+                allowEdgeWeightForm: true,
+                allowGraphRightClickMenu: false,
             });
             return;
         }
-        if(!this.state.rightClickMenu.show && !this.state.allowGraphRightClickMenu){
+        if(e.target.className==='Option'){
+            this.setState({
+                allowGraphRightClickMenu: false,
+                allowEdgeWeightForm: false
+            });
+            return;
+        }
+        if(!this.state.rightClickMenu.show && !this.state.allowGraphRightClickMenu && !this.state.allowEdgeWeightForm){
             return;
         }
         else{
@@ -180,7 +192,8 @@ class Paper extends React.Component{
                     posY: null,
                     caller: 'Page'
                 },
-                allowGraphRightClickMenu: false
+                allowGraphRightClickMenu: false,
+                allowEdgeWeightForm: false
             });
 
         }
@@ -263,7 +276,8 @@ class Paper extends React.Component{
                 pageResetReRenderGraphToTrue={this.resetReRenderGraphToTrue.bind(this)}
                 clearGraph={this.state.clearGraph}
                 resetClearGraphToFalse={this.resetClearGraphToFalse.bind(this)}
-                pageAllowGraphRightClickMenu={this.state.allowGraphRightClickMenu}>
+                pageAllowGraphRightClickMenu={this.state.allowGraphRightClickMenu}
+                pageAllowEdgeWeightForm={this.state.allowEdgeWeightForm}>
             </Graph>
             <RightClickMenu 
                 renderDetails={this.state.rightClickMenu}

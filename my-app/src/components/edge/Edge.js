@@ -6,6 +6,13 @@ class Edge extends React.Component{
     constructor(props){
         super(props);
     }
+    clickHandler(e){
+        console.log('EDGE: got click event');
+        this.props.graphSelectEdge({fromData: this.props.from.data,
+            toData: this.props.to.data,
+            weight: this.props.weight
+        },e);
+    }
     render(){
         var from=this.props.from; //object {x:, y:}
         var to=this.props.to;   //object {x:, y:}
@@ -89,7 +96,7 @@ class Edge extends React.Component{
                 width: length+"px",
                 transform: "rotate("+theta+"deg)"
             }}>
-                <div
+                <div className="EdgeArrow"
                     style={{
                         position: 'absolute',
                         left: length/2+"px",
@@ -97,10 +104,10 @@ class Edge extends React.Component{
                         transform: firstRot,
                         background: "white",
                         width: "10px",
-                        height: "3px"
+                        height: "3px",
                     }}>
                 </div>
-                <div
+                <div className="EdgeArrow"
                     style={{
                         position: 'absolute',
                         left: length/2+"px",
@@ -108,7 +115,7 @@ class Edge extends React.Component{
                         transform: secondRot,
                         background: "white",
                         width: "10px",
-                        height: "3px"
+                        height: "3px",
                     }}>
                 </div>
         </div>
