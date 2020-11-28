@@ -6,11 +6,22 @@ class Edge extends React.Component{
     constructor(props){
         super(props);
     }
+    rightClickHandler(e){
+        console.log('EDGE: got right click event');
+        this.props.graphSelectEdge({
+            fromData: this.props.from.data,
+            toData: this.props.to.data,
+            weight: this.props.weight,
+            directed: this.props.directed
+        },e);
+    }
     clickHandler(e){
         console.log('EDGE: got click event');
-        this.props.graphSelectEdge({fromData: this.props.from.data,
+        this.props.graphSelectEdge({
+            fromData: this.props.from.data,
             toData: this.props.to.data,
-            weight: this.props.weight
+            weight: this.props.weight,
+            directed: this.props.directed
         },e);
     }
     render(){
@@ -86,8 +97,13 @@ class Edge extends React.Component{
                 secondRot="rotate(35deg)";
             }
         }
+        var edgeArrowDisplay="block";
+        if(!this.props.directed){
+            edgeArrowDisplay="none";
+        }
         return <div
             className="Edge"
+            onContextMenu={this.rightClickHandler.bind(this)}
             onClick={this.clickHandler.bind(this)}
             style={{
                 position: 'absolute',
@@ -98,24 +114,26 @@ class Edge extends React.Component{
             }}>
                 <div className="EdgeArrow"
                     style={{
+                        display: edgeArrowDisplay,
                         position: 'absolute',
                         left: length/2+"px",
                         top: "4.3px",
                         transform: firstRot,
                         background: "white",
                         width: "10px",
-                        height: "3px",
+                        height: "3px"
                     }}>
                 </div>
                 <div className="EdgeArrow"
                     style={{
+                        display: edgeArrowDisplay,
                         position: 'absolute',
                         left: length/2+"px",
                         top: "-3.5px",
                         transform: secondRot,
                         background: "white",
                         width: "10px",
-                        height: "3px",
+                        height: "3px"
                     }}>
                 </div>
         </div>

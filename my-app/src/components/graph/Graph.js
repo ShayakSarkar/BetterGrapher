@@ -40,7 +40,8 @@ class Graph extends React.Component{
         this.selectedEdge={
             fromData: null,
             toData: null,
-            weight: null
+            weight: null,
+            directed: true
         } 
     }
     componentDidUpdate(){
@@ -157,42 +158,55 @@ class Graph extends React.Component{
     }
     rightClickHandler(e){
         console.log('GRAPH: right click handler called');
-        this.selectedEdge={
-            fromData: null,
-            toData: null,
-            weight: null
-        };
-        if(e.target.className!=='Node' && e.target.className!=='NodePayload'){
-            return;
+        if(e.target.className==='Edge'){
+            console.log('GRAPH: right click got from edge');
+            this.setState({
+                rightClickMenu: {
+                    show: true,
+                    posx: e.clientX,
+                    posy: e.clientY,
+                    caller: 'Edge'
+                }
+            });
         }
-        this.setState({
-            rightClickMenu: {
-                show: true,
-                posx: e.clientX,
-                posy: e.clientY,
-                caller: 'Graph'       
-            },
-        });
-        console.log('GRAPH: Right click state changed');
-        console.log('GRAPH: current state');
-        console.log('GRAPH: selected node: ',e.target);
-        if(e.target.className==='NodePayload'){
-            console.log('GRAPH: value of node: ',e.target.outerText);
-            this.selectedNode={
-                data: e.target.outerText,
-                posx: e.clientX,
-                posy: e.clientY
+        else if(e.target.className==='Node' || e.target.className==='NodePayload'){
+            this.setState({
+                rightClickMenu: {
+                    show: true,
+                    posx: e.clientX,
+                    posy: e.clientY,
+                    caller: 'Graph'       
+                },
+            });
+            console.log('GRAPH: Right click state changed');
+            console.log('GRAPH: current state');
+            console.log('GRAPH: selected node: ',e.target);
+            if(e.target.className==='NodePayload'){
+                console.log('GRAPH: value of node: ',e.target.outerText);
+                this.selectedNode={
+                    data: e.target.outerText,
+                    posx: e.clientX,
+                    posy: e.clientY
+                }
             }
-        }
-        else{
-            console.log('GRAPH: value of node: ',e.target.children[0].outerText);
-            this.selectedNode={
-                data: e.target.children[0].outerText,
-                posx: e.clientX,
-                posy: e.clientY
+            else{
+                console.log('GRAPH: value of node: ',e.target.children[0].outerText);
+                this.selectedNode={
+                    data: e.target.children[0].outerText,
+                    posx: e.clientX,
+                    posy: e.clientY
+                }
             }
+            console.log(this.state);
         }
-        console.log(this.state);
+    }
+    match(obj1,obj2){
+        console.log('GRAPH (match): trying to match',obj1,obj2);
+        if(obj1.from.data===obj2.fromData && obj1.to.data===obj2.toData && obj1.weight===obj2.weight && obj1.directed===obj2.directed){
+            console.log('GRAPH: match found ',obj1);
+            return true;
+        }
+        return false;
     }
     clickHandler(e){
         this.setState({
@@ -203,11 +217,45 @@ class Graph extends React.Component{
                 caller: 'Graph'
             }
         });
+        if(e.target.value==='make undirected' || e.target.value==='make directed'){
+            if(e.target.value==='make directed'){
+                console.log('GRAPH: within make directed');
+                for(var i in this.state.edgeList){
+                    var edge=this.state.edgeList[i];
+                    if(this.match(edge,this.selectedEdge)){
+                        this.state.edgeList[i].directed=true;
+                        console.log('GRAPH: ',this.state.edgeList);
+                        break; 
+                    }
+                } 
+            }
+            else if(e.target.value==='make undirected'){
+                console.log('GRAPH: within undirected');
+                console.log('GRAPH: selected edge: ',this.selectedEdge);
+                for(var i in this.state.edgeList){
+                    var edge=this.state.edgeList[i];
+                    if(this.match(edge,this.selectedEdge)){
+                        this.state.edgeList[i].directed=false;
+                        console.log('GRAPH: ',this.state.edgeList);
+                        break;
+                    }
+                }
+            }
+            this.selectedEdge={
+                fromData: null,
+                toData: null,
+                weight: null,
+                directed: null
+            };
+            this.forceUpdate();
+            return;
+        }
         if(e.target.className!=='Edge' && e.target.className!=='EdgeArrow'){
             this.selectedEdge={
                 fromData: null,
                 toData: null,
-                weight: null
+                weight: null,
+                directed: true
             };
         }
         console.log('GRAPH: click receieved from ',e.target.className,'value: ',e.target.value);
@@ -232,14 +280,15 @@ class Graph extends React.Component{
                 from: {
                     data: this.currentFrom.data,
                     x: this.currentFrom.posx,
-                    y: this.currentFrom.posy
+                    y: this.currentFrom.posy,
                 },
                 to: {
                     data: this.currentTo.data,
                     x: this.currentTo.posx,
-                    y: this.currentTo.posy
+                    y: this.currentTo.posy,
                 },
-                weight: 1
+                weight: 1,
+                directed: true
             });
             var newEdgeList=this.state.edgeList;
             this.setState({
@@ -270,7 +319,8 @@ class Graph extends React.Component{
         this.selectedEdge={
             fromData: edgeDetails.fromData,
             toData: edgeDetails.toData,
-            weight: edgeDetails.weight
+            weight: edgeDetails.weight,
+            directed: edgeDetails.directed
         };
         this.setState({
             edgeWeightForm: {
@@ -282,16 +332,8 @@ class Graph extends React.Component{
     }
     changeEdgeWeight(newWeight){
         console.log('GRAPH: new weight receieved from edge weight form', newWeight);
-        function match(obj1,obj2){
-            console.log('GRAPH (match): trying to match',obj1,obj2);
-            if(obj1.from.data===obj2.fromData && obj1.to.data===obj2.toData && obj1.weight===obj2.weight){
-                console.log('GRAPH: match found ',obj1);
-                return true;
-            }
-            return false;
-        }
         for(var i in this.state.edgeList){
-            if(match(this.state.edgeList[i],this.selectedEdge)){
+            if(this.match(this.state.edgeList[i],this.selectedEdge)){
                 this.state.edgeList[i].weight=newWeight;
                 console.log('GRAPH: changed edge to ',this.state.edgeList[i]);
                 break;
@@ -300,7 +342,8 @@ class Graph extends React.Component{
         this.selectedEdge={
             fromData: null,
             toData: null,
-            weight: null
+            weight: null,
+            directed: true
         };
     }
     render(){
@@ -317,23 +360,22 @@ class Graph extends React.Component{
             };
             this.state.edgeList=[];
         }
-        if(!this.props.pageAllowEdgeWeightForm){
-            this.selectedEdge={
-                fromData: null,
-                toData: null,
-                weight: null
-            };
+        if(this.props.directedness.change){
+            for(var i in this.state.edgeList){
+                this.state.edgeList[i].directed=this.props.directedness.isEdgeDirected;
+            }
+            this.props.pageResetDirectedness();
         }
         var modifiedRightClickMenuRenderDetails= {   
             show: this.props.pageAllowGraphRightClickMenu && this.state.rightClickMenu.show,
             posx: this.state.rightClickMenu.posx,
             posy: this.state.rightClickMenu.posy,
-            caller: 'Graph'                            
+            caller: this.state.rightClickMenu.caller
         }
         var modifiedEdgeWeightFormRenderDetails={
             show: this.props.pageAllowEdgeWeightForm && this.state.edgeWeightForm.show,
             posx: this.state.edgeWeightForm.posx,
-            posy: this.state.edgeWeightForm.posy,
+            posy: this.state.edgeWeightForm.posy
         }
         if(this.props.newNode.data===null){
             //the modifiedRenderDetails object takes into account if the Paper component
@@ -370,6 +412,7 @@ class Graph extends React.Component{
                 from={obj.from}
                 to={obj.to}
                 weight={obj.weight}
+                directed={obj.directed}
                 graphSelectEdge={this.selectEdge.bind(this)}>
             </Edge>
         }
@@ -382,7 +425,8 @@ class Graph extends React.Component{
             {nodeElms}
             {edgeElms}
             <RightClickMenu 
-                renderDetails={modifiedRightClickMenuRenderDetails}>
+                renderDetails={modifiedRightClickMenuRenderDetails}
+                directed={this.selectedEdge.directed}>
             </RightClickMenu>
             <EdgeWeightForm
                 renderDetails={modifiedEdgeWeightFormRenderDetails}

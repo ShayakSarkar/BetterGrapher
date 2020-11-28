@@ -59,6 +59,38 @@ class RightClickMenu extends React.Component{
         </div>
         return elm;
     }
+    showEdgeRightClickMenu(){
+        var details=this.props.renderDetails;
+        //console.log(details);
+        var directedUndirected=null;
+        if(this.props.directed){
+            directedUndirected='make undirected';
+        }
+        else{
+            directedUndirected='make directed';
+        }
+        if(!details.show){
+            return <div display="none"></div>
+        }
+        var elm=<div 
+            className="RightClickMenu" 
+            style={{
+                zIndex: "1000",
+                position: 'absolute',
+                left: this.props.renderDetails.posx+"px",
+                top: this.props.renderDetails.posy+"px"
+            }}>
+            <option 
+                className="Option"
+                onClick={this.props.nodeDeleteNode}>
+                delete edge
+            </option>
+            <option className="Option">
+                {directedUndirected}
+            </option>
+        </div>
+        return elm; 
+    }
     render(){
         console.log('RIGHT_CLICK_MENU: caller is',this.props.renderDetails.caller);
         if(this.props.renderDetails.caller==='Page'){
@@ -66,6 +98,9 @@ class RightClickMenu extends React.Component{
         }
         else if(this.props.renderDetails.caller==='Graph'){
             return this.showNodeRightClickMenu.call(this);
+        }
+        else if(this.props.renderDetails.caller==='Edge'){
+            return this.showEdgeRightClickMenu.call(this);
         }
         return <div></div>
     }

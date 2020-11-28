@@ -10,6 +10,17 @@
     font-weight: bolder;
     padding: 5px;
     z-index: 13;
+    animation-name: fadein;
+    animation-duration: 0.2s;
+}
+
+@keyframes fadein{
+    from{
+        opacity: 0%;
+    }
+    to{
+        opacity: 100%;
+    }
 }
 
 .EdgeFormButton:hover{

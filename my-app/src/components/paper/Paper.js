@@ -5,6 +5,7 @@ import Graph from '../graph/Graph';
 import RightClickMenu from '../right_click_menu/RightClickMenu';
 import ExportButton from '../export_button/ExportButton';
 import ClearButton from '../clear_button/ClearButton';
+import ChangeDirectednessButton from '../change_directedness_button/ChangeDirectednessButton';
 
 //We need to add a grid pattern to the paper element later on
 class Paper extends React.Component{
@@ -29,7 +30,11 @@ class Paper extends React.Component{
             reRenderGraph: false,
             clearGraph: false,
             allowGraphRightClickMenu: true,
-            allowEdgeWeightForm: true
+            allowEdgeWeightForm: true,
+            directedness: {
+                change: false,
+                isEdgeDirected: true
+            }
         }
     }
     resetClearGraphToTrue(){
@@ -44,14 +49,25 @@ class Paper extends React.Component{
         });
     }
     resetClearGraphToFalse(){
-        this.setState({
-            clearGraph: false
-        });
+        this.state.clearGraph=false;
     }
     onRightClickHandler(e){
         e.preventDefault();
-        //console.log('PAPER: got right click from ',e.target.className);
-        if(e.target.className==='Node' || e.target.className==='NodePayload'){
+        console.log('PAPER: got right click from ',e.target.className);
+        if(e.target.className==='Edge'){
+            this.setState({
+                rightClickMenu: {
+                    show: false,
+                    posx: null,
+                    posy: null,
+                    caller: 'Edge'
+                },
+                allowGraphRightClickMenu: true,
+                allowEdgeWeightForm: false
+            });
+            return;
+        }
+        else if(e.target.className==='Node' || e.target.className==='NodePayload'){
             if(this.state.rightClickMenu.show){
                 this.setState({
                     rightClickMenu: {
@@ -107,9 +123,7 @@ class Paper extends React.Component{
         });
     }
     resetReRenderGraphToFalse(){
-        this.setState({
-            reRenderGraph: false
-        });
+        this.state.reRenderGraph=false
     }
     resetReRenderGraphToTrue(){
         this.setState({
@@ -254,6 +268,43 @@ class Paper extends React.Component{
         </div>);
         return backgroundLines;
     }
+    changeDirectedness(){
+        if(this.state.directedness.isEdgeDirected){
+            this.setState({
+                directedness: {
+                    change: true,
+                    isEdgeDirected: false
+                },
+                allowEdgeWeightForm: false,
+                allowGraphRightClickMenu: false,
+                rightClickMenu: {
+                    show: false,
+                    posx: null,
+                    posy: null,
+                    caller: 'Page'
+                }
+            });
+        }
+        else if(!this.state.directedness.isEdgeDirected){
+            this.setState({
+                directedness: {
+                    change: true,
+                    isEdgeDirected: true
+                },
+                allowGraphRightClickMenu: false,
+                allowEdgeWeightForm: false,
+                rightClickMenu: {
+                    show: false,
+                    posx: null,
+                    posy: null,
+                    caller: 'Page'
+                }
+            });
+        }
+    }
+    resetDirectedness(){
+        this.state.directedness.change=false;
+    }
     render(){
         //console.log('Paper props');
         //console.log(this.state);
@@ -277,7 +328,9 @@ class Paper extends React.Component{
                 clearGraph={this.state.clearGraph}
                 resetClearGraphToFalse={this.resetClearGraphToFalse.bind(this)}
                 pageAllowGraphRightClickMenu={this.state.allowGraphRightClickMenu}
-                pageAllowEdgeWeightForm={this.state.allowEdgeWeightForm}>
+                pageAllowEdgeWeightForm={this.state.allowEdgeWeightForm}
+                directedness={this.state.directedness}
+                pageResetDirectedness={this.resetDirectedness.bind(this)}>
             </Graph>
             <RightClickMenu 
                 renderDetails={this.state.rightClickMenu}
@@ -296,6 +349,9 @@ class Paper extends React.Component{
             <ClearButton
                 pageResetClearGraphToTrue={this.resetClearGraphToTrue.bind(this)}>
             </ClearButton>
+            <ChangeDirectednessButton
+                pageChangeDirectedness={this.changeDirectedness.bind(this)}>
+            </ChangeDirectednessButton>
         </div>
     }
 }
