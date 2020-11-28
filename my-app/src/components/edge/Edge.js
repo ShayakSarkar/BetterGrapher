@@ -37,8 +37,6 @@ class Edge extends React.Component{
             if(p2.y===p3.y){
                 p2.y+=10;
             }
-            //console.log('EDGE: ',p1,p2,p3);
-            console.log(window.innerHeight);
             p1.y=window.innerHeight-p1.y;
             p2.y=window.innerHeight-p2.y;
             p3.y=window.innerHeight-p3.y;
@@ -49,8 +47,6 @@ class Edge extends React.Component{
             return Math.sqrt((p2.y-p1.y)*(p2.y-p1.y)+(p2.x-p1.x)*(p2.x-p1.x));
         }
         function hasFirstQuad(p1,p2,p3){
-            //console.log('EDGE: ',p1,p2,p3);
-            console.log(window.innerHeight);
             p1.y=window.innerHeight-p1.y;
             p2.y=window.innerHeight-p2.y;
             p3.y=window.innerHeight-p3.y;

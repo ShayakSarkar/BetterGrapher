@@ -347,6 +347,53 @@ class Graph extends React.Component{
         };
     }
     render(){
+        async function postData(){
+            //send the node ids instead of the number of nodes
+            //as that would remove the obligation of renumbering
+            //the nodes on deletion
+            var payloadEdgeList=[];
+            var payloadNodeList=[];
+            for(var i in this.state.edgeList){
+                var edge=this.state.edgeList[i];
+                payloadEdgeList.push({
+                    from: edge.from.data,
+                    to: edge.to.data,
+                    weight: edge.weight,
+                    directed: edge.directed
+                });
+            }
+            for(var i in this.nodeList){
+                var node=this.nodeList[i];
+                payloadNodeList.push({
+                    data: node.data
+                });
+            }
+            var payload={
+                graphData:{
+                    edgeList: payloadEdgeList,
+                    nodes: payloadNodeList
+                }
+            }
+            var res=await fetch('http://localhost:5000/export_graph/',{
+                method: 'POST',
+                mode: 'no-cors',
+                referrerPolicy: 'no-referrer',
+                credentials: 'same-origin',
+                body: JSON.stringify(payload), 
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
+            if(!res.ok){
+                console.log('failed');
+            }
+
+        }
+        if(this.props.export){
+            console.log('GRAPH: ready to export',this.state.edgeList);
+            postData.call(this);
+            this.props.pageResetExportToFalse();
+        }
         console.log('GRAPH: current nodeList: ',this.nodeList);
         if(this.props.clearGraph){
             this.nodeList=[];

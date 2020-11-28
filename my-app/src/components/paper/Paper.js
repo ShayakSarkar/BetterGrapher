@@ -34,7 +34,7 @@ class Paper extends React.Component{
             directedness: {
                 change: false,
                 isEdgeDirected: true
-            }
+            },
         }
     }
     resetClearGraphToTrue(){
@@ -102,8 +102,6 @@ class Paper extends React.Component{
         });
     }
     getNextNodeData(){
-        //console.log('Printing state');
-        //console.log(this.state); 
         if(this.state.currentNumberingScheme==='a'){
             return String.fromCharCode(65+this.state.numberOfNodes);
         }
@@ -140,9 +138,7 @@ class Paper extends React.Component{
             });
         }
         var nextNodeData=this.getNextNodeData.call(this);
-        //console.log(nextNodeData);
         var n=this.state.numberOfNodes+1;
-        //console.log('number of nodes',n);
         this.setState({
             newNode: {
                 posx: e.pageX,
@@ -160,12 +156,13 @@ class Paper extends React.Component{
             allowGraphRightClickMenu: false
         });
     }
-    pageExportHandler(e){
+    exportHandler(e){
         e.preventDefault();
         console.log('Export handler called');
         this.setState({
             export: true
         });
+        console.log(this.state);
     }
     changeNumberingScheme(newScheme){
         //newScheme can be either 'a' or '1'
@@ -338,7 +335,7 @@ class Paper extends React.Component{
             </RightClickMenu>        
             
             <ExportButton 
-                pageExportHandler={this.pageExportHandler.bind(this)}>
+                pageExportHandler={this.exportHandler.bind(this)}>
             </ExportButton>
 
             <NumberingButton 

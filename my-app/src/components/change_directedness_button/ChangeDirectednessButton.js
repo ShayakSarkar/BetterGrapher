@@ -9,7 +9,7 @@ class ChangeDirectednessButton extends React.Component{
             style={{
                 position: 'absolute',
                 left: '780px',
-                top: '70px'
+                top: '69px'
             }}>
             change edge directedness
         </button>
