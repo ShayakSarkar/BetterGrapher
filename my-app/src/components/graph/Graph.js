@@ -76,7 +76,8 @@ class Graph extends React.Component{
                         x: this.state.edgeList[i].to.x,
                         y: this.state.edgeList[i].to.y
                     },
-                    weight: this.state.edgeList[i].weight
+                    weight: this.state.edgeList[i].weight,
+                    directed: this.state.edgeList[i].directed
                });
                console.log('GRAPH: 1 edge pushed into newEdgeList',newEdgeList);
            } 
@@ -105,7 +106,8 @@ class Graph extends React.Component{
                         x: this.state.edgeList[i].to.x,
                         y: this.state.edgeList[i].to.y
                     },
-                    weight: this.state.edgeList[i].weight
+                    weight: this.state.edgeList[i].weight,
+                    directed: this.state.edgeList[i].directed
                });
                console.log('GRAPH: 1 edge pushed into newEdgeList',newEdgeList);
            } 
