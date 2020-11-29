@@ -3,8 +3,8 @@ Helps in making graphs for practicing graph theory or testing graph theory algor
 through the use of a GUI
 
 <h2>Instructions</h2>
-  - <b>Dependencies</b>
-    - npm
-    - flask
+  - <b>Dependencies</b><br>
+    - npm<br>
+    - flask<br>
   
   - <b> procedure </b>
