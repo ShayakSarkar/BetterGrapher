@@ -64,8 +64,7 @@ class Graph extends React.Component{
             for(var i in this.state.edgeList){
                var fromData=this.state.edgeList[i].from.data;
                var toData=this.state.edgeList[i].to.data;
-               //console.log('GRAPH: fromData: ',fromData.charCodeAt(0)-64);
-               //console.log('GRAPH: toData: ',toData.charCodeAt(0)-64);
+
                newEdgeList.push({
                     from: {
                         data: String(fromData.charCodeAt(0)-64),
@@ -94,8 +93,6 @@ class Graph extends React.Component{
             for(var i in this.state.edgeList){
                var fromData=this.state.edgeList[i].from.data;
                var toData=this.state.edgeList[i].to.data;
-               //console.log('GRAPH: fromData: ',fromData.charCodeAt(0)-64);
-               //console.log('GRAPH: toData: ',toData.charCodeAt(0)-64);
                newEdgeList.push({
                     from: {
                         data: String.fromCharCode(64+parseInt(fromData)),
@@ -120,18 +117,14 @@ class Graph extends React.Component{
         }
     }
     transformNodeList(){
-        //console.log('started transfrom');
         for(var node in this.nodeList){
-            //console.log('node=',node);
             if(this.props.currentNumberingScheme==='a'){
                 this.nodeList[node].data=String.fromCharCode(65+parseInt(node));
             }
             else if(this.props.currentNumberingScheme==='1'){
-                //console.log(parseInt(node)+1);
                 this.nodeList[node].data=String(parseInt(node)+1)
             }
         }
-        //console.log('ended transform');
     }
     
     rightClickHandler(e){
@@ -289,7 +282,7 @@ class Graph extends React.Component{
             this.forceUpdate();
             return;
         }
-        else if(e.target.className!=='Edge' && e.target.className!=='EdgeArrow'){
+        else if(e.target.className!=='Edge' && e.target.className!=='EdgeArrow' && e.target.className!=='SelfLoop'){
             this.selectedEdge={
                 fromData: null,
                 toData: null,
@@ -413,6 +406,7 @@ class Graph extends React.Component{
                     nodes: payloadNodeList
                 }
             }
+            console.log(JSON.stringify(payload));
             var res=await fetch('http://localhost:5000/export_graph/',{
                 method: 'POST',
                 mode: 'no-cors',
@@ -420,7 +414,8 @@ class Graph extends React.Component{
                 credentials: 'same-origin',
                 body: JSON.stringify(payload), 
                 headers: {
-                    "Content-type": "application/json; charset=UTF-8"
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Access-Control-Allow-Origin": "*"
                 }
             });
             if(!res.ok){

@@ -18,12 +18,15 @@ if __name__=='__main__':
         buffer=''
         for edge in data['edgeList']:
             buffer+=str(edge['from'])+' '+str(edge['to'])+' '+str(edge['weight'])+'\n'
-            if not edge['directed']:
+            if not edge['directed'] and edge['from']!=edge['to']:
                 buffer+=str(edge['to'])+' '+str(edge['from'])+' '+str(edge['weight'])+'\n'
         file.write(buffer)
         print('WRITE_TO_FILE: written \n',buffer)
         buffer=''
 
+    @app.route('/test_api/',methods=['GET'])
+    def test_api_view():
+        return "got get request"
     @app.route('/export_graph/',methods=['POST'])
     def export_graph_view():
         print('EXPORT_GRAPH: endpoint hit')
