@@ -13,7 +13,7 @@
 
 #workspace
 /src/workspace/a.*
-/src/workspace/test.*
+/src/workspace/*.class
 
 # misc
 .DS_Store
