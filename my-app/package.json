@@ -2,6 +2,11 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "description": "Frontend module of BetterGrapher. It contains the GUI logic for the project. Currently fully supported only on the latest version of Chrome",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShayakSarkar/BetterGrapher"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",

@@ -25,9 +25,6 @@ class RightClickMenu extends React.Component{
                 onClick={this.props.pageAddNewNode}>
                 Add node
             </option>
-            <option className="Option">
-                Placeholder
-            </option>
         </div>
         return elm;
     }

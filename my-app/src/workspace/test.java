@@ -9,7 +9,7 @@ public class test {
         }
     }
     public static void main(String args[]){
-        HashMap<String,Vector<JavaAdapter.EdgeDetails>> hm=JavaAdapter.getGraph();
-        printGraph(hm);
+        HashMap<String,Vector<JavaAdapter.EdgeDetails>> graph=JavaAdapter.getGraph();
+        printGraph(graph);
     }    
 }

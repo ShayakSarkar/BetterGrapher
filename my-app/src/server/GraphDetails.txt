@@ -1,4 +1,9 @@
-A B 
-A B 2
-A A 4
-B B 3
+A B C D E F 
+E A 12
+F A 22
+A B 21
+A A 33
+A C 23
+C D 55
+D D 66
+D B 43
