@@ -18,7 +18,7 @@ class RightClickMenu extends React.Component{
                 position: 'absolute',
                 left: this.props.renderDetails.posx+'px',
                 top: this.props.renderDetails.posy+'px',
-                zIndex: '1000'
+                zIndex: '2000'
             }}>
             <option 
                 className="Option"
@@ -37,17 +37,17 @@ class RightClickMenu extends React.Component{
         if(!details.show){
             return <div display="none"></div>
         }
+
         var elm=<div 
             className="RightClickMenu" 
             style={{
-                zIndex: "1000",
+                zIndex: "2000",
                 position: 'absolute',
                 left: this.props.renderDetails.posx+"px",
                 top: this.props.renderDetails.posy+"px"
             }}>
             <option 
-                className="Option"
-                onClick={this.props.nodeDeleteNode}>
+                className="Option">
                 delete node
             </option>
             <option className="Option">
@@ -75,7 +75,7 @@ class RightClickMenu extends React.Component{
         var elm=<div 
             className="RightClickMenu" 
             style={{
-                zIndex: "1000",
+                zIndex: "2000",
                 position: 'absolute',
                 left: this.props.renderDetails.posx+"px",
                 top: this.props.renderDetails.posy+"px"

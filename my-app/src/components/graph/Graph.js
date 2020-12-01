@@ -22,6 +22,7 @@ class Graph extends React.Component{
             }
         };
         this.nodeList=[];
+        this.printedLoops={};
         this.currentFrom={
             data: null,
             posx: null,
@@ -133,34 +134,9 @@ class Graph extends React.Component{
         //console.log('ended transform');
     }
     
-    deleteNode(id){
-        var i=0;
-        for(i=0;i<this.nodeList.length;i++){
-            if(this.nodeList[i].data!==id){
-                continue;
-            }
-            else{
-                break;
-            }
-        }
-        console.log('GRAPH: Changing node values');
-        while(i<this.nodeList.length-1){
-            this.nodeList[i]={
-                posx: this.nodeList[i+1].posx,
-                posy: this.nodeList[i+1].posy,
-                data: this.nodeList[i+1].data
-            };
-            i=i+1;
-        }
-        console.log('GRAPH: list before popping',this.nodeList)
-        var poppedNode=this.nodeList.pop();
-        console.log('GRAPH: popped node: ',poppedNode);
-        console.log('GRAPH: list after popping',this.nodeList);
-        this.props.pageResetReRenderGraphToTrue();
-    }
     rightClickHandler(e){
         console.log('GRAPH: right click handler called');
-        if(e.target.className==='Edge'){
+        if(e.target.className==='Edge' || e.target.className==='SelfLoop'){
             console.log('GRAPH: right click got from edge');
             this.setState({
                 rightClickMenu: {
@@ -210,6 +186,60 @@ class Graph extends React.Component{
         }
         return false;
     }
+    deleteNode(id){
+        console.log('GRAPH: ',id, 'needs to be deleted');
+        if(this.nodeList.length===1){
+            console.log('this.nodeList length is 1');
+            this.nodeList=[];
+            this.state.edgeList=[];
+            this.props.pageResetNewNode({
+                data: null,
+                posx: null,
+                posy: null
+            });
+        }
+        else if(this.nodeList.length>1){
+            var newNodeList=[];
+            for(var i in this.nodeList){
+                var node=this.nodeList[i];
+                if(node.data===id){
+                    continue;
+                }
+                else{
+                    newNodeList.push(node);
+                }
+            }
+            this.nodeList=newNodeList;
+            var newEdgeList=[];
+            for(var i in this.state.edgeList){
+                var edge=this.state.edgeList[i];
+                if(edge.to.data===id || edge.from.data===id){
+                    continue;
+                }
+                else{
+                    newEdgeList.push(edge);
+                }
+            } 
+            this.state.edgeList=newEdgeList;
+            //this will cause the rerender
+            this.props.pageResetNewNode({...this.nodeList[this.nodeList.length-1]}); 
+        }
+    }
+    deleteEdge(edgeToDelete){
+        var newEdgeList=[];
+        var deleted=false;
+        for(var i in this.state.edgeList){
+            var edge=this.state.edgeList[i];
+            if(this.match(edge,edgeToDelete) && !deleted){
+                deleted=true;
+                continue;
+            } 
+            newEdgeList.push(edge);
+        }
+        this.setState({
+            edgeList: newEdgeList
+        });
+    }
     clickHandler(e){
         this.setState({
             rightClickMenu: {
@@ -219,7 +249,14 @@ class Graph extends React.Component{
                 caller: 'Graph'
             }
         });
-        if(e.target.value==='make undirected' || e.target.value==='make directed'){
+        if(e.target.value==='delete node'){
+            //console.log('GRAPH: node needs to be deleted');
+            this.deleteNode(this.selectedNode.data);
+        }
+        else if(e.target.value==='delete edge'){
+            this.deleteEdge(this.selectedEdge);
+        }
+        else if(e.target.value==='make undirected' || e.target.value==='make directed'){
             if(e.target.value==='make directed'){
                 console.log('GRAPH: within make directed');
                 for(var i in this.state.edgeList){
@@ -252,7 +289,7 @@ class Graph extends React.Component{
             this.forceUpdate();
             return;
         }
-        if(e.target.className!=='Edge' && e.target.className!=='EdgeArrow'){
+        else if(e.target.className!=='Edge' && e.target.className!=='EdgeArrow'){
             this.selectedEdge={
                 fromData: null,
                 toData: null,
@@ -439,7 +476,7 @@ class Graph extends React.Component{
         //    return this.cachedRender;
         //}
         console.log('GRAPH: rendering list....');
-        if ((this.nodeList.length === 0 || this.props.newNode.data !== this.nodeList[this.nodeList.length - 1].data ) && !this.props.reRenderGraph) {
+        if (((this.nodeList.length === 0 && this.props.newNode.data!=null) || this.props.newNode.data !== this.nodeList[this.nodeList.length - 1].data ) && !this.props.reRenderGraph) {
             this.nodeList.push(this.props.newNode);
         }
         if(this.props.reRenderGraph){
@@ -456,17 +493,27 @@ class Graph extends React.Component{
             </Node>
         }
         function getReactObjectsFromEdges(obj){
+            var loopNo=null;
+            if(obj.from.data===obj.to.data){
+                if(!this.printedLoops[obj.from.data]){
+                    this.printedLoops[obj.from.data]=0;
+                }
+                loopNo=this.printedLoops[obj.from.data]+1; 
+                this.printedLoops[obj.from.data]=loopNo;
+            }
             return <Edge
                 key={(obj.from.x*obj.from.y/obj.to.x*obj.to.y)+Math.random()*10000}
                 from={obj.from}
                 to={obj.to}
                 weight={obj.weight}
                 directed={obj.directed}
+                loopNo={loopNo}
                 graphSelectEdge={this.selectEdge.bind(this)}>
             </Edge>
         }
         var nodeElms=this.nodeList.map(getReactObjectsFromNodes.bind(this));
         var edgeElms=this.state.edgeList.map(getReactObjectsFromEdges.bind(this));
+        this.printedLoops={};
         //console.log('nodeElms: ',nodeElms);
         this.cachedRender=<div
             onContextMenu={this.rightClickHandler.bind(this)}

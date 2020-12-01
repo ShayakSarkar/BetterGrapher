@@ -54,7 +54,7 @@ class Paper extends React.Component{
     onRightClickHandler(e){
         e.preventDefault();
         console.log('PAPER: got right click from ',e.target.className);
-        if(e.target.className==='Edge'){
+        if(e.target.className==='Edge' || e.target.className==='SelfLoop'){
             this.setState({
                 rightClickMenu: {
                     show: false,
@@ -145,7 +145,6 @@ class Paper extends React.Component{
                 posy: e.pageY,
                 data: nextNodeData
             },
-            addNewNode: true,
             numberOfNodes: n,
             rightClickMenu: {
                 show: false,
@@ -178,7 +177,7 @@ class Paper extends React.Component{
     }
     onClickHandler(e){
         console.log('PAPER: click event receieved',e.target.className);
-        if(e.target.className==="Edge" || e.target.className==="EdgeArrow"){
+        if(e.target.className==="Edge" || e.target.className==="EdgeArrow" || e.target.className==='SelfLoop'){
             this.setState({
                 allowEdgeWeightForm: true,
                 allowGraphRightClickMenu: false,
@@ -208,6 +207,13 @@ class Paper extends React.Component{
             });
 
         }
+    }
+    resetNewNode(obj){
+        this.setState({
+            newNode: {
+                ...obj
+            }
+        });
     }
     getBackgroundLines(type){
         function getLeft(type,i){
@@ -260,7 +266,7 @@ class Paper extends React.Component{
             borderColor: '#00000007',
             backgroundColor: '#00000000',
             left: getLeft(type,i),
-            top: getTop(type,i)
+            top: getTop(type,i),
         }}> 
         </div>);
         return backgroundLines;
@@ -315,6 +321,7 @@ class Paper extends React.Component{
             {backgroundHorizontalLines}
             <Graph 
                 newNode={this.state.newNode} 
+                pageResetNewNode={this.resetNewNode.bind(this)}
                 export={this.state.export}
                 currentNumberingScheme={this.state.currentNumberingScheme}
                 pageChangeNumberingScheme={this.changeNumberingScheme.bind(this)}

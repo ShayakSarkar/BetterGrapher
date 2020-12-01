@@ -5,6 +5,7 @@ import './Edge.css';
 class Edge extends React.Component{
     constructor(props){
         super(props);
+        this.isRendered=1;
     }
     rightClickHandler(e){
         console.log('EDGE: got right click event');
@@ -24,7 +25,32 @@ class Edge extends React.Component{
             directed: this.props.directed
         },e);
     }
+    makeSelfLoop(){
+        var radius=this.props.loopNo*50;
+        var posx=parseInt(this.props.from.x)-radius;
+        var posy=parseInt(this.props.from.y)-radius;
+        console.log('GRAPH (makeSelfLoop): ',posx,posy)
+        var zIndex=100-this.props.loopNo;
+        return <div
+            className="SelfLoop"
+            onContextMenu={this.rightClickHandler.bind(this)}
+            onClick={this.clickHandler.bind(this)}
+            style={{
+                position: 'absolute',
+                left: posx+'px',
+                top: posy+'px',
+                height: radius+'px',
+                width: radius+'px',
+                borderRadius: (radius/2)+'px',
+                backgroundColor: 'transparent',
+                zIndex: zIndex
+            }}>
+        </div>
+    }
     render(){
+        if(this.props.loopNo!=null){
+            return this.makeSelfLoop();
+        }
         var from=this.props.from; //object {x:, y:}
         var to=this.props.to;   //object {x:, y:}
         var theta=Math.atan((to.y-from.y)/(to.x-from.x))*(360/(2*Math.PI));
