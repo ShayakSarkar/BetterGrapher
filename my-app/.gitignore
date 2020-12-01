@@ -14,6 +14,8 @@
 #workspace
 /src/workspace/a.*
 /src/workspace/*.class
+/src/workspace/adapters/*.class
+/src/workspace/adapters/*.exe
 
 #Graph data file
 
